@@ -6,6 +6,7 @@ from datetime import datetime
 
 from flask import Flask, Response, render_template
 
+
 def readJSONCSVData():
 	dbhour = {}
 	with open('data/ianuarie.csv', newline='') as csvfile:
@@ -21,6 +22,7 @@ def readJSONCSVData():
 				dbhour[dt]=item.replace(",",".");
 	return json.dumps( [{'time': ora, 'value': dbhour[ora]} for ora in dbhour]);
 
+cachedJson = readJSONCSVData();
 app = Flask(__name__)
 random.seed()  # Initialize the random number generator
 
@@ -34,17 +36,16 @@ def index():
 def chart_data():
 	def generate_random_data():
 		while True:
-			ret_val = readJSONCSVData();
-			yield f"{ret_val}\n\n";
+			yield f"{cachedJson}\n\n";
 			time.sleep(10)
 	return Response(generate_random_data(), mimetype='/event-stream')
 
 @app.route('/static-data')
 def static_data():
-	return Response(readJSONCSVData(), mimetype='app/json')
+	return Response(cachedJson, mimetype='app/json')
 
-#if __name__ == '__main__':
+if __name__ == '__main__':
     #print(readJSONCSVData());
-    #app.run(debug=True, threaded=True)
+    app.run(debug=True, threaded=True)
     
 
