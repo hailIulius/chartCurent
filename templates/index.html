@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chiajna visualizare curent electric</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="canvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="width: 100%; overflow-x: auto;overflow-y:hidden">
+  <div style="width: 3000px, height: 300px">
+    <canvas id="chart1" height="300" width="0"></canvas>
+  </div>
+</div>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        const config = {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: "E-Distributie offline datas",
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: [],
+                    fill: false,
+                }],
+            },
+            options: {
+                maintainAspectRatio: true,
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Consumul de curent in Chiajna'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Valoare in KW/h'
+                        }
+                    }]
+                }
+            }
+        };
+
+
+        const context = document.getElementById('canvas').getContext('2d');
+
+        const lineChart = new Chart(context, config);
+
+        $.ajax({  
+            url: "../static-data",  
+            type: "Get",  
+            dataType: "json",  
+            success: function (data) {  
+                console.log("am responsive");
+                //config.data.labels = [1,2,3,4];
+                //config.data.datasets[0].data = [1,2,3,4];
+                for (var i in data) {
+                    //console.log("am responsive", data[i].time, data[i].value);
+                    config.data.labels.push(data[i].time);
+                    config.data.datasets[0].data.push(data[i].value)
+                }    
+                lineChart.update();
+            }
+        });
+
+    });
+</script>
+</body>
+</html>
