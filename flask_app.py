@@ -21,16 +21,16 @@ def readJSONCSVData():
 				dbhour[dt]=item.replace(",",".");
 	return json.dumps( [{'time': ora, 'value': dbhour[ora]} for ora in dbhour]);
 
-application = Flask(__name__)
+app = Flask(__name__)
 random.seed()  # Initialize the random number generator
 
 
-@application.route('/')
+@app.route('/')
 def index():
     return render_template('index.html')
 
 
-@application.route('/chart-data')
+@app.route('/chart-data')
 def chart_data():
 	def generate_random_data():
 		while True:
@@ -39,12 +39,12 @@ def chart_data():
 			time.sleep(10)
 	return Response(generate_random_data(), mimetype='/event-stream')
 
-@application.route('/static-data')
+@app.route('/static-data')
 def static_data():
-	return Response(readJSONCSVData(), mimetype='application/json')
+	return Response(readJSONCSVData(), mimetype='app/json')
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
     #print(readJSONCSVData());
-    application.run(debug=True, threaded=True)
+    #app.run(debug=True, threaded=True)
     
 
