@@ -63,14 +63,16 @@ def generateStats(dbhour):
 	<p><b>Consum mediu</b> : {6} <p> \
 	</p><b>Cel mai mare consum</b> : {7}, {8} : {9} kWh</p> \
 	".format(oramin,oramax,nrTotal,nrValoriValide,nrTotal-nrValoriValide,suma,consumMediu, numeleZilei(itmax[0]),itmax[0],itmax[1]);
-	return strStats;
+	return strStats,consumMediu;
+
 
 pathToData = "/home/ig17o/curent/data/";
 if(not os.path.exists("/home/ig17o/curent/data/") ):
 	pathToData ="data/";
 dbhour = readAllCSV(pathToData);
-
-cachedJson = json.dumps( {'data':[{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())],'stats':generateStats(dbhour)});
+strSt,consumMediu=generateStats(dbhour);
+print ("Consum mediu", consumMediu);
+cachedJson = json.dumps( {'data':[{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())],'stats':strSt,'consumMediu':consumMediu});
 app = Flask(__name__)
 
 
@@ -94,3 +96,4 @@ def static_data():
 
 if __name__ == '__main__':
     app.run(debug=True, threaded=True)
+

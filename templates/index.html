@@ -24,8 +24,41 @@ Statistics about the curent consumtion in Chiajna
 <!--suppress JSUnresolvedLibraryURL -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script>
+    var originalLineDraw = Chart.controllers.horizontalBar.prototype.draw;
+    Chart.helpers.extend(Chart.controllers.horizontalBar.prototype, {
 
+      draw: function () {
+            console.log("dsdsds");
+          originalLineDraw.apply(this, arguments);
+
+          var chart = this.chart;
+          var ctx = chart.chart.ctx;
+
+          var index = chart.config.options.lineAtIndex;
+          if (index) {
+
+              var xaxis = chart.scales['x-axis-0'];
+              var yaxis = chart.scales['y-axis-0'];
+
+              var x1 = xaxis.getPixelForValue(index);                       
+              var y1 = 4;                                                   
+
+              var x2 = xaxis.getPixelForValue(index);                       
+              var y2 = yaxis.height+3;                                        
+
+              ctx.save();
+              ctx.beginPath();
+              ctx.moveTo(x1, y1);
+              ctx.strokeStyle = 'blue';
+              ctx.lineTo(x2, y2);
+              ctx.stroke();
+
+              ctx.restore();
+          }
+      }
+    });
     $(document).ready(function () {
+
 
         const config = {
             type: 'horizontalBar',
@@ -40,9 +73,13 @@ Statistics about the curent consumtion in Chiajna
                 }],
             },
             options: {
+                lineAtIndex: 0.1,
                 maintainAspectRatio: true,
                 responsive: true,
                 maxTicksLimit: 10000,
+                legend: {
+                    display: false
+                },
                 tooltips: {
                     mode: 'index',
                     intersect: false,
@@ -84,7 +121,8 @@ Statistics about the curent consumtion in Chiajna
             url: "../static-data",  
             type: "Get",  
             dataType: "json",  
-            success: function (ev) {  
+            success: function (ev) {
+                config.options.lineAtIndex=ev.consumMediu;  
                 for (var i in ev.data) {
                     //console.log("am responsive", data[i].time, data[i].value);
                     //config.data.labels.push(Date.parse(data[i].time));
