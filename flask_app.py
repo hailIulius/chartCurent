@@ -7,28 +7,33 @@ import collections
 import os
 from datetime import datetime
 
+
 from flask import Flask, Response, render_template
 
 
+def getDataTime(strDateTime):
+	dd=datetime.strptime(strDateTime, '%Y-%m-%d %H:%M');
+	return dd;
+
 def numeleZilei(strDateTime):
-	day=datetime.strptime(strDateTime, '%Y-%m-%d %H:%M').weekday()
+	day=getDataTime(strDateTime).weekday();
 	day_name= ['Luni', 'Marti', 'Miercuri', 'Joi', 'Vineri', 'Sambata','Duminica']
-	print(day_name[day]) 
-	return day_name[day]
+	return day_name[day];
 
 def readCSVtoDict(csvFilename,dbhour):
+	today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0);
 	with open(csvFilename, newline='') as csvfile:
 		dbcsv = list(csv.reader(csvfile, delimiter=';', quotechar='\"'));
-		
-		#"2018-12-20 14:00"
-
+		lastModified = datetime.strptime(time.ctime(os.path.getmtime(csvFilename)), "%a %b %d %H:%M:%S %Y").replace(hour=0, minute=0, second=0, microsecond=0);
 		for row in dbcsv[1:]:
 			for count, item in list(enumerate(row))[1:]:
 				#print(count, item)
 				dt='{0}-{1}-{2} {3:02d}:00'.format(row[0].split('.')[2],row[0].split('.')[1],row[0].split('.')[0],count-1);
 				#print(dt," ", item);
-				
-				dbhour[dt]=float(item.replace(",",".").replace("-","-0.01"));
+				#check time in the future
+				dtDateTime = getDataTime(dt);
+				if (dtDateTime<lastModified and dtDateTime<today):
+					dbhour[dt]=float(item.replace(",",".").replace("-","-0.01"));
 	#return json.dumps( [{'time': ora, 'value': dbhour[ora]} for ora in dbhour]);
 
 def readAllCSV(dirName):
