@@ -53,8 +53,15 @@
                 },
                 scales: {
                     xAxes: [{
+
                         display: true,
-						distribution: 'series'
+						distribution: 'series',
+                        ticks: {
+                            fontSize: 6,
+                            autoSkip: true,
+                            maxRotation: 90,
+                            minRotation: 90
+                        }
                     }],
                     yAxes: [{
                         display: true,
