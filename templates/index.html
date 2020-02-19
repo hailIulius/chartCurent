@@ -9,9 +9,9 @@
 <body>
 
 <div id="stats">
-Statistics about the curent consumtion in Chiajna
+  Statistics about the curent consumtion in Chiajna
 </div>
-<div id="grafice-div" style="height: 100%; ">
+<div id="grafice-div">
   <div style="height: 10000px">
       <canvas id="canvas"  style="min-height:800px" class="table" width="0"></canvas>
   </div>
@@ -24,11 +24,11 @@ Statistics about the curent consumtion in Chiajna
 <!--suppress JSUnresolvedLibraryURL -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script>
+  /*
     var originalLineDraw = Chart.controllers.horizontalBar.prototype.draw;
     Chart.helpers.extend(Chart.controllers.horizontalBar.prototype, {
 
       draw: function () {
-            console.log("dsdsds");
           originalLineDraw.apply(this, arguments);
 
           var chart = this.chart;
@@ -56,7 +56,7 @@ Statistics about the curent consumtion in Chiajna
               ctx.restore();
           }
       }
-    });
+    }); */
     $(document).ready(function () {
 
 
@@ -73,10 +73,10 @@ Statistics about the curent consumtion in Chiajna
                 }],
             },
             options: {
-                lineAtIndex: 0.1,
+                //lineAtIndex: 0.1,
                 maintainAspectRatio: true,
                 responsive: true,
-                maxTicksLimit: 10000,
+                maxTicksLimit: 1000,
                 legend: {
                     display: false
                 },
@@ -123,18 +123,15 @@ Statistics about the curent consumtion in Chiajna
             dataType: "json",  
             success: function (ev) {
                 config.options.lineAtIndex=ev.consumMediu;  
-                for (var i in ev.data) {
-                    //console.log("am responsive", data[i].time, data[i].value);
-                    //config.data.labels.push(Date.parse(data[i].time));
-					
-					config.data.labels.push(ev.data[i].time);
-                    config.data.datasets[0].data.push( ev.data[i].value)
-					//config.data.labels.push(data[i].time);
-                    //config.data.datasets[0].data.push(data[i].value)
-                }    
+                //config.data.labels = new Array(ev.data.time);
+                //config.data.datasets[0].data = new Array(ev.data.value)
+                for(i in ev.data.time) {
+                    config.data.labels.push(ev.data.time[i]);
+                    config.data.datasets[0].data.push(ev.data.value[i]);
+                }
+                
                 lineChart.update();
-                var div = document.getElementById('stats');
-                div.innerHTML = ev.stats;
+                document.getElementById('stats').innerHTML=ev.stats;
             }
         });
 
