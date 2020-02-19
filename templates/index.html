@@ -9,9 +9,9 @@
 <body>
 
 
-<div style="width: 100%; overflow-x: auto;overflow-y:hidden">
+<div id="grafice-div" style="width: 100%; overflow-x: auto;">
   <div style="width: 10000px">
-      <canvas id="canvas" height="500" width="0"></canvas>
+      <canvas id="canvas"  style="min-height:400px" class="table" width="0"></canvas>
   </div>
 </div>
 
@@ -22,6 +22,9 @@
 <!--suppress JSUnresolvedLibraryURL -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script>
+    $(window).resize(function() {
+    $('#grafice-div').css('height', $(window).height());
+    });
     $(document).ready(function () {
 
         const config = {
