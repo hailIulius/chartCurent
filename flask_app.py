@@ -93,8 +93,4 @@ def static_data():
 	return Response(cachedJson, mimetype='app/json')
 
 if __name__ == '__main__':
-    #print(readCSVtoDict());
-    
-
     app.run(debug=True, threaded=True)
-
