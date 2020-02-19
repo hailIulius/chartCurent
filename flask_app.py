@@ -33,6 +33,9 @@ def readAllCSV(dirName):
 			print(fileN);
 			readCSVtoDict(fileN);
 
+pathToData = "data/";
+if( os.path.exists("/home/ig17o/curent/data/") ):
+	pathToData ="/home/ig17o/curent/data/";
 readAllCSV("data/");
 cachedJson = json.dumps( [{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())]);
 app = Flask(__name__)
