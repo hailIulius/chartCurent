@@ -2,14 +2,17 @@ import json
 import random
 import time
 import csv
+import operator
+import collections
+import os
 from datetime import datetime
 
 from flask import Flask, Response, render_template
 
+dbhour = {}
 
-def readJSONCSVData():
-	dbhour = {}
-	with open('data/ianuarie.csv', newline='') as csvfile:
+def readCSVtoDict(csvFilename):
+	with open(csvFilename, newline='') as csvfile:
 		dbcsv = list(csv.reader(csvfile, delimiter=';', quotechar='\"'));
 		
 		#"2018-12-20 14:00"
@@ -17,14 +20,22 @@ def readJSONCSVData():
 		for row in dbcsv[1:]:
 			for count, item in list(enumerate(row))[1:]:
 				#print(count, item)
-				dt='{0}-{1}-{2} {3}:{4}'.format(row[0].split('.')[2],row[0].split('.')[1],row[0].split('.')[0],count-1,"00:00");
+				dt='{0}-{1}-{2} {3}:{4}'.format(row[0].split('.')[2],row[0].split('.')[1],row[0].split('.')[0],count-1,"00");
 				#print(dt," ", item);
-				dbhour[dt]=item.replace(",",".");
-	return json.dumps( [{'time': ora, 'value': dbhour[ora]} for ora in dbhour]);
+				dbhour[dt]=float(item.replace(",",".").replace("-","0"));
+	#return json.dumps( [{'time': ora, 'value': dbhour[ora]} for ora in dbhour]);
 
-cachedJson = readJSONCSVData();
+def readAllCSV(dirName):
+	print("readAllCSV");
+	for file in os.listdir(dirName):
+		if file.endswith(".csv"):
+			fileN=os.path.join(dirName, file);
+			print(fileN);
+			readCSVtoDict(fileN);
+
+readAllCSV("data/");
+cachedJson = json.dumps( [{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())]);
 app = Flask(__name__)
-random.seed()  # Initialize the random number generator
 
 
 @app.route('/')
@@ -42,10 +53,15 @@ def chart_data():
 
 @app.route('/static-data')
 def static_data():
+	print (cachedJson);
 	return Response(cachedJson, mimetype='app/json')
 
 if __name__ == '__main__':
-    #print(readJSONCSVData());
+    #print(readCSVtoDict());
     app.run(debug=True, threaded=True)
-    
+    itmax=max(dbhour.items(), key=operator.itemgetter(1));
+    itmin=min(dbhour.items(), key=operator.itemgetter(1));
+    print (itmax[0],itmax[1]);
+    print (itmin[0],itmin[1]);
+    print("Total consum: ", sum(dbhour.values()));
 
