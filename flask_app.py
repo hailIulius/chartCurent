@@ -59,10 +59,10 @@ def generateStats(dbhour):
 
 	strStats="<p><b>Interval</b> : {0} - {1} </p>\
 	<p><b>Total citiri</b> : {2} / Total ore citiri cu date : {3} / Ore lipsa : {4}</p> \
-	<p><b>Total consum</b> : {5} kWh</p> \
-	<p><b>Consum mediu</b> : {6} <p> \
-	</p><b>Cel mai mare consum</b> : {7}, {8} : {9} kWh</p> \
-	".format(oramin,oramax,nrTotal,nrValoriValide,nrTotal-nrValoriValide,suma,consumMediu, numeleZilei(itmax[0]),itmax[0],itmax[1]);
+	<p><b>Total consum</b> : {5} kWh - Cost estimat(1kWh=0.7 LEI) {6:.2f} LEI</p> \
+	<p><b>Consum mediu</b> : {7} <p> \
+	</p><b>Cel mai mare consum</b> : {8}, {9} : {10} kWh</p> \
+	".format(oramin,oramax,nrTotal,nrValoriValide,nrTotal-nrValoriValide,suma,float(suma)*0.7,consumMediu, numeleZilei(itmax[0]),itmax[0],itmax[1]);
 	return strStats,consumMediu;
 
 
