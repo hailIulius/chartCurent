@@ -9,9 +9,14 @@ from datetime import datetime
 
 from flask import Flask, Response, render_template
 
-dbhour = {}
 
-def readCSVtoDict(csvFilename):
+def numeleZilei(strDateTime):
+	day=datetime.strptime(strDateTime, '%Y-%m-%d %H:%M').weekday()
+	day_name= ['Luni', 'Marti', 'Miercuri', 'Joi', 'Vineri', 'Sambata','Duminica']
+	print(day_name[day]) 
+	return day_name[day]
+
+def readCSVtoDict(csvFilename,dbhour):
 	with open(csvFilename, newline='') as csvfile:
 		dbcsv = list(csv.reader(csvfile, delimiter=';', quotechar='\"'));
 		
@@ -20,8 +25,9 @@ def readCSVtoDict(csvFilename):
 		for row in dbcsv[1:]:
 			for count, item in list(enumerate(row))[1:]:
 				#print(count, item)
-				dt='{0}-{1}-{2} {3}:{4}'.format(row[0].split('.')[2],row[0].split('.')[1],row[0].split('.')[0],count-1,"00");
+				dt='{0}-{1}-{2} {3:02d}:00'.format(row[0].split('.')[2],row[0].split('.')[1],row[0].split('.')[0],count-1);
 				#print(dt," ", item);
+				
 				dbhour[dt]=float(item.replace(",",".").replace("-","-0.01"));
 	#return json.dumps( [{'time': ora, 'value': dbhour[ora]} for ora in dbhour]);
 
@@ -32,14 +38,10 @@ def readAllCSV(dirName):
 		if file.endswith(".csv"):
 			fileN=os.path.join(dirName, file);
 			print(fileN);
-			readCSVtoDict(fileN);
+			readCSVtoDict(fileN,dbhour);
+	return dbhour;
 
-pathToData = "/home/ig17o/curent/data/";
-if(not os.path.exists("/home/ig17o/curent/data/") ):
-	pathToData ="data/";
-readAllCSV(pathToData);
-
-def generateStats():
+def generateStats(dbhour):
 	dbhourStats = dict((k, v) for k, v in dbhour.items() if float(v) >= 0) ;
 	itmax=max(dbhourStats.items(), key=operator.itemgetter(1));
 	itmin=min(dbhourStats.items(), key=operator.itemgetter(1));
@@ -53,10 +55,17 @@ def generateStats():
 	strStats="<p><b>Interval</b> : {0} - {1} </p>\
 	<p><b>Total citiri</b> : {2} / Total ore citiri cu date : {3} / Ore lipsa : {4}</p> \
 	<p><b>Total consum</b> : {5} kWh</p> \
-	<p><b>Consum mediu</b> : {6} <p></p><b>Cel mai mare consum</b> : {7} - {8} kWh</p> \
-	".format(oramin,oramax,nrTotal,nrValoriValide,nrTotal-nrValoriValide,suma,consumMediu, itmax[0],itmax[1]);
+	<p><b>Consum mediu</b> : {6} <p> \
+	</p><b>Cel mai mare consum</b> : {7}, {8} : {9} kWh</p> \
+	".format(oramin,oramax,nrTotal,nrValoriValide,nrTotal-nrValoriValide,suma,consumMediu, numeleZilei(itmax[0]),itmax[0],itmax[1]);
 	return strStats;
-cachedJson = json.dumps( {'data':[{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())],'stats':generateStats()});
+
+pathToData = "/home/ig17o/curent/data/";
+if(not os.path.exists("/home/ig17o/curent/data/") ):
+	pathToData ="data/";
+dbhour = readAllCSV(pathToData);
+
+cachedJson = json.dumps( {'data':[{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())],'stats':generateStats(dbhour)});
 app = Flask(__name__)
 
 
