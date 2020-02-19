@@ -22,7 +22,7 @@ def readCSVtoDict(csvFilename):
 				#print(count, item)
 				dt='{0}-{1}-{2} {3}:{4}'.format(row[0].split('.')[2],row[0].split('.')[1],row[0].split('.')[0],count-1,"00");
 				#print(dt," ", item);
-				dbhour[dt]=float(item.replace(",",".").replace("-","0"));
+				dbhour[dt]=float(item.replace(",",".").replace("-","-0.01"));
 	#return json.dumps( [{'time': ora, 'value': dbhour[ora]} for ora in dbhour]);
 
 def readAllCSV(dirName):
@@ -38,16 +38,25 @@ pathToData = "/home/ig17o/curent/data/";
 if(not os.path.exists("/home/ig17o/curent/data/") ):
 	pathToData ="data/";
 readAllCSV(pathToData);
-itmax=max(dbhour.items(), key=operator.itemgetter(1));
-itmin=min(dbhour.items(), key=operator.itemgetter(1));
-oramax=max(dbhour.keys());
-oramin=min(dbhour.keys());
-print (itmax[0],itmax[1]);
-print (itmin[0],itmin[1]);
-print("Total consum: ", sum(dbhour.values()));
-strStats="<p><b>Interval</b> : {0} - {1}</p><p><b>Total consum</b> : {2} kWh</p><p><b>Cel mai mare consum</b> : {3} - {4}</p>".format(oramin,oramax,sum(dbhour.values()), itmax[0],itmax[1]);
-print (strStats);
-cachedJson = json.dumps( {'data':[{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())],'stats':strStats});
+
+def generateStats():
+	dbhourStats = dict((k, v) for k, v in dbhour.items() if float(v) >= 0) ;
+	itmax=max(dbhourStats.items(), key=operator.itemgetter(1));
+	itmin=min(dbhourStats.items(), key=operator.itemgetter(1));
+	oramax=max(dbhourStats.keys());
+	oramin=min(dbhourStats.keys());
+	suma=sum(dbhourStats.values());
+	nrTotal=len(dbhour);
+	nrValoriValide=len(dbhourStats);
+	consumMediu=float(suma)/nrValoriValide;
+
+	strStats="<p><b>Interval</b> : {0} - {1} </p>\
+	<p><b>Total citiri</b> : {2} / Total ore citiri cu date : {3} / Ore lipsa : {4}</p> \
+	<p><b>Total consum</b> : {5} kWh</p> \
+	<p><b>Consum mediu</b> : {6} <p></p><b>Cel mai mare consum</b> : {7} - {8} kWh</p> \
+	".format(oramin,oramax,nrTotal,nrValoriValide,nrTotal-nrValoriValide,suma,consumMediu, itmax[0],itmax[1]);
+	return strStats;
+cachedJson = json.dumps( {'data':[{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())],'stats':generateStats()});
 app = Flask(__name__)
 
 
