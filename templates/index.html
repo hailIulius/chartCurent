@@ -10,8 +10,8 @@
 
 
 <div style="width: 100%;height: 100%; overflow-x: auto;overflow-y:hidden">
-  <div style="width: 5000px, height: 100%">
-      <canvas id="canvas" height="500" width="0"></canvas>
+  <div style="width: 5000px">
+      <canvas id="canvas" height="800" width="0"></canvas>
   </div>
 </div>
 
@@ -39,11 +39,7 @@
             options: {
                 maintainAspectRatio: true,
                 responsive: true,
-                maxTicksLimit: 300,
-                title: {
-                    display: true,
-                    text: 'Consumul de curent in Chiajna'
-                },
+                maxTicksLimit: 10000,
                 tooltips: {
                     mode: 'index',
                     intersect: false,
@@ -81,8 +77,11 @@
                 for (var i in data) {
                     //console.log("am responsive", data[i].time, data[i].value);
                     //config.data.labels.push(Date.parse(data[i].time));
+					
 					config.data.labels.push(data[i].time);
                     config.data.datasets[0].data.push(data[i].value)
+					//config.data.labels.push(data[i].time);
+                    //config.data.datasets[0].data.push(data[i].value)
                 }    
                 lineChart.update();
             }
