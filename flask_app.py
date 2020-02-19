@@ -45,7 +45,7 @@ oramin=min(dbhour.keys());
 print (itmax[0],itmax[1]);
 print (itmin[0],itmin[1]);
 print("Total consum: ", sum(dbhour.values()));
-strStats="<p><b>Interval</b> : {0} - {1}</p><p><b>Total consum</b> : {2}</p><p><b>Cel mai mare consum</b> : {3} - {4}</p>".format(oramin,oramax,sum(dbhour.values()), itmax[0],itmax[1]);
+strStats="<p><b>Interval</b> : {0} - {1}</p><p><b>Total consum</b> : {2} kWh</p><p><b>Cel mai mare consum</b> : {3} - {4}</p>".format(oramin,oramax,sum(dbhour.values()), itmax[0],itmax[1]);
 print (strStats);
 cachedJson = json.dumps( {'data':[{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())],'stats':strStats});
 app = Flask(__name__)
