@@ -38,7 +38,16 @@ pathToData = "/home/ig17o/curent/data/";
 if(not os.path.exists("/home/ig17o/curent/data/") ):
 	pathToData ="data/";
 readAllCSV(pathToData);
-cachedJson = json.dumps( [{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())]);
+itmax=max(dbhour.items(), key=operator.itemgetter(1));
+itmin=min(dbhour.items(), key=operator.itemgetter(1));
+oramax=max(dbhour.keys());
+oramin=min(dbhour.keys());
+print (itmax[0],itmax[1]);
+print (itmin[0],itmin[1]);
+print("Total consum: ", sum(dbhour.values()));
+strStats="<p><b>Interval</b> : {0} - {1}</p><p><b>Total consum</b> : {2}</p><p><b>Cel mai mare consum</b> : {3} - {4}</p>".format(oramin,oramax,sum(dbhour.values()), itmax[0],itmax[1]);
+print (strStats);
+cachedJson = json.dumps( {'data':[{'time': ora, 'value': dbhour[ora]} for ora in sorted (dbhour.keys())],'stats':strStats});
 app = Flask(__name__)
 
 
@@ -63,10 +72,6 @@ def static_data():
 if __name__ == '__main__':
     #print(readCSVtoDict());
     
-    itmax=max(dbhour.items(), key=operator.itemgetter(1));
-    itmin=min(dbhour.items(), key=operator.itemgetter(1));
-    print (itmax[0],itmax[1]);
-    print (itmin[0],itmin[1]);
-    print("Total consum: ", sum(dbhour.values()));
+
     app.run(debug=True, threaded=True)
 
