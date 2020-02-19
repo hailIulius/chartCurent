@@ -71,6 +71,7 @@ def staticResponseJson():
 		pathToData = "data/"
 	dbhour = readAllCSV(pathToData)
 	timeList, valueList  = zip(*sorted(zip(dbhour.keys(),dbhour.values())))
+	print(len(timeList), " ", len(valueList))
 	strSt, consumMediu = generateStats(dbhour)	
 	cachedJson = json.dumps({'data': {'time': timeList, 'value': valueList}, 'stats': strSt, 'consumMediu': consumMediu});
 	print (cachedJson)

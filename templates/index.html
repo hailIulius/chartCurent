@@ -74,9 +74,16 @@
             },
             options: {
                 //lineAtIndex: 0.1,
+                animation: {
+                  duration: 0 // general animation time
+                },
+                hover: {
+                  animationDuration: 0 // duration of animations when hovering an item
+                },
+                responsiveAnimationDuration: 0, // animation duration after a resize
                 maintainAspectRatio: true,
                 responsive: true,
-                maxTicksLimit: 1000,
+                maxTicksLimit: 10000,
                 legend: {
                     display: false
                 },
@@ -128,6 +135,7 @@
                 for(i in ev.data.time) {
                     config.data.labels.push(ev.data.time[i]);
                     config.data.datasets[0].data.push(ev.data.value[i]);
+                    console.log(i, " - ", ev.data.time[i], "-",ev.data.value[i]);
                 }
                 
                 lineChart.update();
