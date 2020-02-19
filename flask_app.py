@@ -27,6 +27,7 @@ def readCSVtoDict(csvFilename):
 
 def readAllCSV(dirName):
 	print("readAllCSV");
+	dbhour = {}
 	for file in os.listdir(dirName):
 		if file.endswith(".csv"):
 			fileN=os.path.join(dirName, file);
@@ -61,10 +62,11 @@ def static_data():
 
 if __name__ == '__main__':
     #print(readCSVtoDict());
-    app.run(debug=True, threaded=True)
+    
     itmax=max(dbhour.items(), key=operator.itemgetter(1));
     itmin=min(dbhour.items(), key=operator.itemgetter(1));
     print (itmax[0],itmax[1]);
     print (itmin[0],itmin[1]);
     print("Total consum: ", sum(dbhour.values()));
+    app.run(debug=True, threaded=True)
 
